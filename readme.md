@@ -1,7 +1,7 @@
 # Sistema Bancário — Desafio DIO
 
 > **Desafio:** Modelagem de Sistema Bancário com POO em Python
-> **Bootcamp:** Python AI Backend Developer — [DIO](https://www.dio.me/)
+> **Bootcamp:** Python AI Backend Developer: [DIO](https://www.dio.me/)
 > **Autor:** Igor
 
 ---
@@ -16,12 +16,15 @@ O sistema foi construído inteiramente em Python, seguindo o diagrama de classes
 
 ## Funcionalidades
 
-- Cadastro de clientes (Pessoa Física)
+- Cadastro de clientes (Pessoa Física) com validação de CPF duplicado
 - Criação de Conta Corrente vinculada a um cliente
-- Realização de **depósitos** e **saques**
+- Realização de **depósitos** e **saques** com validação de valor
 - Validação de saldo insuficiente nos saques
+- Consulta de **extrato** com histórico de transações
+- **Listagem de clientes** e suas contas vinculadas
+- **Listagem de contas** com saldo atual
+- Suporte a múltiplas contas por cliente com seleção interativa
 - Registro automático de todas as transações no **histórico**
-- Suporte a múltiplas contas por cliente
 
 ---
 
@@ -168,63 +171,51 @@ cd SistemaBancario
 python main.py
 ```
 
-### Saída esperada
+### Menu interativo
 ```
-=== Cliente ===
-Nome:            Igor
-CPF:             082.456.744.01
-Endereço:        Brasilia
-Data nascimento: 2001-08-21
-
-=== Conta Corrente ===
-Número:  XXXXX
-Agência: 0001
-Saldo:   R$ 0.00
-Limite:  R$ 500.00
-Saques permitidos: 3
-
-=== Transações ===
-Depósito de R$ 1000.00 → Saldo: R$ 1000.00
-Saque de R$ 200.00   → Saldo: R$ 800.00
-Saque de R$ 5000.00  → Saldo: R$ 800.00  (saldo insuficiente, sem efeito)
-
-=== Histórico ===
-  1. Depositar - R$ 1000.00
-  2. Saque - R$ 200.00
-  3. Saque - R$ 5000.00
-
-Contas de Igor: [XXXXX]
+========================================
+         SISTEMA BANCÁRIO
+========================================
+[1] Novo cliente
+[2] Nova conta corrente
+[3] Depositar
+[4] Sacar
+[5] Extrato
+[6] Listar clientes
+[7] Listar contas
+[0] Sair
+----------------------------------------
+=>
 ```
 
 ---
 
-## Exemplo de Uso
+## Exemplo de Sessão
 
-```python
-from core.pessoa_fisica import PessoaFisica
-from core.contacorrente import ContaCorrente
-from core.historico import Historico
-from core.deposito import Depositar
-from core.saque import Saque
+```
+=> 1
+CPF: 123.456.789-00
+Nome: Imperador
+Data de nascimento (AAAA-MM-DD): 2001-08-21
+Endereço: Brasilia
+Cliente 'Imperador' cadastrado com sucesso.
 
-# Criar cliente
-cliente = PessoaFisica(
-    endereco="Brasilia",
-    cpf="082.456.744.01",
-    nome="Igor",
-    data_nascimento="2001-08-21",
-)
+=> 2
+CPF do titular: 123.456.789-00
+Conta 45231 criada para Imperador | Agência: 0001
 
-# Criar conta corrente
-historico = Historico()
-conta = ContaCorrente.nova_conta(cliente, historico=historico)
-cliente.adicionar_conta(conta)
+=> 3
+CPF do titular: 123.456.789-00
+Valor do depósito: R$ 1000
+Depósito de R$ 1000.00 realizado. Saldo: R$ 1000.00
 
-# Realizar transações
-cliente.realizar_transacao(conta, Depositar(1000.0))
-cliente.realizar_transacao(conta, Saque(200.0))
+=> 5
+CPF do titular: 123.456.789-00
 
-print(f"Saldo: R$ {conta.saldo:.2f}")  # Saldo: R$ 800.00
+--- Extrato | Conta 45231 ---
+  1. Depositar   R$ 1000.00
+  Saldo atual: R$ 1000.00
+-------------------------------
 ```
 
 ---
